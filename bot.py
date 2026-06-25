@@ -131,17 +131,17 @@ def build_keyboard(key: str):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [
-        [
             InlineKeyboardButton("Туловище", callback_data="torso"),
             InlineKeyboardButton("Руки", callback_data="hands"),
-        ],
-        [InlineKeyboardButton("Ноги", callback_data="legs")],
+            InlineKeyboardButton("Ноги", callback_data="legs"),
+            InlineKeyboardButton("Назад", callback_data="back_in_action"),
+            InlineKeyboardButton("Назад в меню", callback_data="back_in_menu"),
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     await update.message.reply_text(
-        "Please choose:",
+        "Выберите:",
         reply_markup=reply_markup,
     )
 
