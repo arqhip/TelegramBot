@@ -19,7 +19,8 @@ MENU = {
         "buttons": [
             ("Бицепс", "biceps"),
             ("Трицепс", "triceps"),
-        ]
+        ],
+        "parent": "hands"
     },
 
     "biceps": {
@@ -48,7 +49,8 @@ MENU = {
             ("Квадрицепс", "quads"),
             ("Бицепс бедра", "legs_biceps"),
             ("Икры", "calves"),
-        ]
+        ],
+        "parent": "legs"
     },
 
     "buttocks": {
@@ -92,7 +94,8 @@ MENU = {
             ("Грудь", "chest"),
             ("Спина", "back"),
             ("Пресс", "press"),
-        ]
+        ],
+        "parent": "torso"
     },
 
     "chest": {
