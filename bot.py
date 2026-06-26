@@ -168,7 +168,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     data = query.data
 
     if data == "step_back":
-        current = context.user_data.get("current", "hands")
+        current = context.user_data.get("current")
         parent = MENU[current].get("parent")
 
         context.user_data["current"] = parent
