@@ -30,7 +30,8 @@ MENU = {
         "buttons": [
             ("Подъем штанги на бицепс", "barbell_biceps"),
             ("Молотки на бицепс", "hammers_biceps"),
-        ]
+        ],
+        "parent": "hands"
     },
 
     "triceps": {
@@ -38,7 +39,8 @@ MENU = {
         "buttons": [
             ("Французский жим", "french_press"),
             ("Канат на трицепс", "triceps_rope"),
-        ]
+        ],
+        "parent": "hands"
     },
 
 
@@ -57,7 +59,8 @@ MENU = {
         "buttons": [
             ("Ягодичный мост", "buttock_bridge"),
             ("Румынская тяга", "romanian_thrust"),
-        ]
+        ],
+        "parent": "legs"
     },
 
     "quads": {
@@ -65,7 +68,8 @@ MENU = {
         "buttons": [
             ("Присед", "squat"),
             ("Разгибание ног", "leg_extension"),
-        ]
+        ],
+        "parent": "legs"
     },
 
     "legs_biceps": {
@@ -73,14 +77,16 @@ MENU = {
         "buttons": [
             ("Румынская тяга", "romanian_thrust"),
             ("Становая тяга", "deadlift_legs"),
-        ]
+        ],
+        "parent": "legs"
     },
 
     "calves": {
         "text": "Выбери упражнение на икры",
         "buttons": [
             ("Подъёмы на носки стоя", "standing_toe_lifts"),
-        ]
+        ],
+        "parent": "legs"
     },
 
     "torso": {
@@ -98,7 +104,8 @@ MENU = {
             ("Жим штанги лежа", "bench_press"),
             ("Жим штанги на наклонной скамье", "bench_press_bench"),
             ("Жим гантелей на скамье 30 градусов", "dumbbell_bench"),
-        ]
+        ],
+        "parent": "torso"
     },
 
     "back": {
@@ -107,7 +114,8 @@ MENU = {
             ("Тяга верхнего блока", "upper_block_thrust"),
             ("Тяга штанги в наклоне", "barbell_pull_tilt"),
             ("Становая тяга", "deadlift_back"),
-        ]
+        ],
+        "parent": "torso"
     },
 
     "press": {
@@ -115,7 +123,8 @@ MENU = {
         "buttons": [
             ("Подъем коленей к груди", "lifting_knees_chest"),
             ("Подъем прямых ног до параллели", "lifting_straight_legs"),
-        ]
+        ],
+        "parent": "torso"
     },
 }
 
@@ -131,11 +140,11 @@ def build_keyboard(key: str):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [
+        [
             InlineKeyboardButton("Туловище", callback_data="torso"),
             InlineKeyboardButton("Руки", callback_data="hands"),
-            InlineKeyboardButton("Ноги", callback_data="legs"),
-            InlineKeyboardButton("Назад", callback_data="back_in_action"),
-            InlineKeyboardButton("Назад в меню", callback_data="back_in_menu"),
+        ],
+        [InlineKeyboardButton("Ноги", callback_data="legs")],
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -162,7 +171,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     # если это упражнение (конечный уровень)
     await query.edit_message_text(
-        f"💪 Упражнение: {data}"
+        f"Упражнение: {data}"
     )
 
 
