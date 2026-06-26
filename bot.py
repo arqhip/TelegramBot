@@ -171,7 +171,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     # если это упражнение (конечный уровень)
     await query.edit_message_text(
-        f"Упражнение: {data}"
+        f"Техника упражнения: "
+        f"{data}"
     )
 
 
