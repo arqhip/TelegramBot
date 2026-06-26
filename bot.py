@@ -133,11 +133,10 @@ def build_keyboard(key: str):
         for text, data in buttons
     ]
 
-if "parent" in MENU[key]:
-    keyboard.append([
-        InlineKeyboardButton("Назад", callback_data="step_back"),
+    if "parent" in MENU[key]:
+        keyboard.append([
+            InlineKeyboardButton("Назад", callback_data="step_back"),
     ])
-
 
     return InlineKeyboardMarkup(keyboard)
 
@@ -167,7 +166,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     if data == "step_back":
         current = context.user_data.get("current", "hands")
-        parent = MENU[current].get("parent", "hands")
+        parent = MENU[current].get("parent")
 
         context.user_data["current"] = parent
 
@@ -187,7 +186,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     await query.edit_message_text(
-        f"Техника упражнения: f{data}"
+        f"Техника упражнения: {data}"
     )
 
 
