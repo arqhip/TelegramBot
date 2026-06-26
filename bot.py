@@ -1,12 +1,9 @@
-#!/usr/bin/env python
-
 import logging
 import os
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Application, CallbackQueryHandler, CommandHandler, ContextTypes
 
-# Логи
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO,
@@ -136,6 +133,12 @@ def build_keyboard(key: str):
         for text, data in buttons
     ]
 
+if "parent" in MENU[key]:
+    keyboard.append([
+        InlineKeyboardButton("Назад", callback_data="step_back"),
+    ])
+
+
     return InlineKeyboardMarkup(keyboard)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -144,7 +147,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             InlineKeyboardButton("Туловище", callback_data="torso"),
             InlineKeyboardButton("Руки", callback_data="hands"),
         ],
-        [InlineKeyboardButton("Ноги", callback_data="legs")],
+        [InlineKeyboardButton("Ноги", callback_data="legs"),
+        ],
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -161,18 +165,29 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     data = query.data
 
-    # если есть такой экран в MENU
+    if data == "step_back":
+        current = context.user_data.get("current", "hands")
+        parent = MENU[current].get("parent", "hands")
+
+        context.user_data["current"] = parent
+
+        await query.edit_message_text(
+            MENU[parent]["text"],
+            reply_markup=build_keyboard(parent)
+        )
+        return
+
     if data in MENU:
+        context.user_data["current"] = data
+
         await query.edit_message_text(
             MENU[data]["text"],
             reply_markup=build_keyboard(data)
         )
         return
 
-    # если это упражнение (конечный уровень)
     await query.edit_message_text(
-        f"Техника упражнения: "
-        f"{"buttons"}"
+        f"Техника упражнения: f{data}"
     )
 
 
