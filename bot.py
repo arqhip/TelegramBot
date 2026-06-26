@@ -11,8 +11,6 @@ logging.basicConfig(
 
 logging.getLogger("httpx").setLevel(logging.WARNING)
 
-logger = logging.getLogger(__name__)
-
 MENU = {
     "hands": {
         "text": "Выбери мышцу рук.",
@@ -20,7 +18,6 @@ MENU = {
             ("Бицепс", "biceps"),
             ("Трицепс", "triceps"),
         ],
-        "parent": "hands"
     },
 
     "biceps": {
@@ -41,7 +38,6 @@ MENU = {
         "parent": "hands"
     },
 
-
     "legs": {
         "text": "Выбери мышцу ног.",
         "buttons": [
@@ -50,7 +46,6 @@ MENU = {
             ("Бицепс бедра", "legs_biceps"),
             ("Икры", "calves"),
         ],
-        "parent": "legs"
     },
 
     "buttocks": {
@@ -95,7 +90,6 @@ MENU = {
             ("Спина", "back"),
             ("Пресс", "press"),
         ],
-        "parent": "torso"
     },
 
     "chest": {
@@ -103,7 +97,7 @@ MENU = {
         "buttons": [
             ("Жим штанги лежа", "bench_press"),
             ("Жим штанги на наклонной скамье", "bench_press_bench"),
-            ("Жим гантелей на скамье 30 градусов", "dumbbell_bench"),
+            ("Жим гантелей", "dumbbell_bench"),
         ],
         "parent": "torso"
     },
@@ -122,11 +116,12 @@ MENU = {
         "text": "Выбери упражнение на пресс.",
         "buttons": [
             ("Подъем коленей к груди", "lifting_knees_chest"),
-            ("Подъем прямых ног до параллели", "lifting_straight_legs"),
+            ("Подъем прямых ног", "lifting_straight_legs"),
         ],
         "parent": "torso"
     },
 }
+
 
 def build_keyboard(key: str):
     buttons = MENU[key]["buttons"]
@@ -136,12 +131,15 @@ def build_keyboard(key: str):
         for text, data in buttons
     ]
 
-    if "parent" in MENU[key]:
+    # кнопки навигации
+    if MENU[key].get("parent"):
         keyboard.append([
             InlineKeyboardButton("Назад", callback_data="step_back"),
-    ])
+            InlineKeyboardButton("Вернуться в меню", callback_data="back_in_menu"),
+        ])
 
     return InlineKeyboardMarkup(keyboard)
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [
@@ -149,15 +147,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             InlineKeyboardButton("Туловище", callback_data="torso"),
             InlineKeyboardButton("Руки", callback_data="hands"),
         ],
-        [InlineKeyboardButton("Ноги", callback_data="legs"),
-        ],
+        [InlineKeyboardButton("Ноги", callback_data="legs")],
     ]
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
 
     await update.message.reply_text(
         "Выберите что хотите тренировать.",
-        reply_markup=reply_markup,
+        reply_markup=InlineKeyboardMarkup(keyboard),
     )
 
 
@@ -167,9 +162,35 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     data = query.data
 
+    # HOME
+    if data == "back_in_menu":
+        context.user_data["current"] = None
+
+        keyboard = [
+            [
+                InlineKeyboardButton("Туловище", callback_data="torso"),
+                InlineKeyboardButton("Руки", callback_data="hands"),
+            ],
+            [InlineKeyboardButton("Ноги", callback_data="legs")],
+        ]
+
+        await query.edit_message_text(
+            "Главное меню:",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+        return
+
+    # BACK
     if data == "step_back":
         current = context.user_data.get("current")
-        parent = MENU[current].get("parent")
+
+        if not current:
+            return
+
+        parent = MENU.get(current, {}).get("parent")
+
+        if not parent:
+            return
 
         context.user_data["current"] = parent
 
@@ -179,6 +200,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
         return
 
+    # MENU NAVIGATION
     if data in MENU:
         context.user_data["current"] = data
 
@@ -188,6 +210,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
         return
 
+    # EXERCISE END
     await query.edit_message_text(
         f"Техника упражнения: {data}"
     )
