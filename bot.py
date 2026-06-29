@@ -125,6 +125,18 @@ MENU = {
     },
 }
 
+def main_menu():
+    keyboard = [
+        [
+            InlineKeyboardButton("Туловище", callback_data="torso"),
+            InlineKeyboardButton("Руки", callback_data="hands"),
+        ],
+        [
+            InlineKeyboardButton("Ноги", callback_data="legs"),
+        ],
+    ]
+
+    return InlineKeyboardMarkup(keyboard)
 
 def build_keyboard(key: str):
     buttons = MENU[key]["buttons"]
@@ -134,14 +146,10 @@ def build_keyboard(key: str):
         for text, data in buttons
     ]
 
-    if MENU[key].get("parent"):
         keyboard.append([
             InlineKeyboardButton("Назад", callback_data="step_back"),
             InlineKeyboardButton("Вернуться в меню", callback_data="back_in_menu"),
         ])
-
-    return InlineKeyboardMarkup(keyboard)
-
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [
@@ -182,30 +190,47 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     if data == "step_back":
-        current = context.user_data.get("current")
+        history = context.user_data.get("history", [])
 
-        if not current:
+        if not history:
+            await query.edit_message_text(
+                "Выберите что хотите тренировать.",
+                reply_markup=main_menu()
+            )
+            context.user_data["current"] = None
             return
 
-        parent = MENU.get(current, {}).get("parent")
-
-        if not parent:
-            return
-
-        context.user_data["current"] = parent
+        previous = history.pop()
+        context.user_data["current"] = previous
 
         await query.edit_message_text(
-            MENU[parent]["text"],
-            reply_markup=build_keyboard(parent)
+            MENU[previous]["text"],
+            reply_markup=build_keyboard(previous)
         )
         return
 
     if data in MENU:
+        history = context.user_data.setdefault("history", [])
+
+        current = context.user_data.get("current")
+        if current:
+            history.append(current)
+
         context.user_data["current"] = data
 
         await query.edit_message_text(
             MENU[data]["text"],
             reply_markup=build_keyboard(data)
+        )
+        return
+
+    if data == "back_in_menu":
+        context.user_data["history"] = []
+        context.user_data["current"] = None
+
+        await query.edit_message_text(
+            "Выберите что хотите тренировать.",
+            reply_markup=main_menu()
         )
         return
 
