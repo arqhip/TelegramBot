@@ -18,6 +18,7 @@ MENU = {
             ("Бицепс", "biceps"),
             ("Трицепс", "triceps"),
         ],
+        "parent": "hands"
     },
 
     "biceps": {
@@ -46,6 +47,7 @@ MENU = {
             ("Бицепс бедра", "legs_biceps"),
             ("Икры", "calves"),
         ],
+        "parent": "legs"
     },
 
     "buttocks": {
@@ -90,6 +92,7 @@ MENU = {
             ("Спина", "back"),
             ("Пресс", "press"),
         ],
+        "parent": "torso"
     },
 
     "chest": {
@@ -131,7 +134,6 @@ def build_keyboard(key: str):
         for text, data in buttons
     ]
 
-    # кнопки навигации
     if MENU[key].get("parent"):
         keyboard.append([
             InlineKeyboardButton("Назад", callback_data="step_back"),
@@ -162,7 +164,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     data = query.data
 
-    # HOME
     if data == "back_in_menu":
         context.user_data["current"] = None
 
@@ -180,7 +181,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
         return
 
-    # BACK
     if data == "step_back":
         current = context.user_data.get("current")
 
@@ -200,7 +200,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
         return
 
-    # MENU NAVIGATION
     if data in MENU:
         context.user_data["current"] = data
 
@@ -210,7 +209,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
         return
 
-    # EXERCISE END
     await query.edit_message_text(
         f"Техника упражнения: {data}"
     )
