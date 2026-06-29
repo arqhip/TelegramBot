@@ -218,6 +218,7 @@ MENU = {
     },
 }
 
+
 def main_menu():
     keyboard = [
         [
@@ -226,7 +227,6 @@ def main_menu():
         ],
         [InlineKeyboardButton("Ноги", callback_data="legs")],
     ]
-
     return InlineKeyboardMarkup(keyboard)
 
 
@@ -280,8 +280,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             return
 
         previous = history.pop()
-        context.user_data["current"] = previous
         context.user_data["history"] = history
+        context.user_data["current"] = previous
 
         await query.edit_message_text(
             MENU[previous]["text"],
@@ -289,7 +289,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
         return
 
-    if data in MENU:
+    if data in MENU and "buttons" in MENU[data]:
         history = context.user_data.setdefault("history", [])
 
         current = context.user_data.get("current")
@@ -306,19 +306,21 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     exercise = MENU.get(data)
 
-    if exercise:
+    if exercise and "video" in exercise:
         text = exercise.get("text", data)
         video = exercise.get("video")
 
-        message = f"🏋️ {text}\n\n🎥 Видео техника:\n{video if video else 'Видео отсутствует'}"
-    else:
-        message = f"Техника упражнения: {data}"
+        await query.edit_message_text(
+            f"🏋️ {text}\n\n🎥 Видео техника:\n{video}",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("🏠 Главное меню", callback_data="back_in_menu")]
+            ])
+        )
+        return
 
     await query.edit_message_text(
-        message,
-        reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("Главное меню", callback_data="back_in_menu")]
-        ])
+        "Ошибка: неизвестная кнопка",
+        reply_markup=main_menu()
     )
 
 
