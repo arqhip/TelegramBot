@@ -25,18 +25,42 @@ MENU = {
         "text": "Выбери упражнение на бицепс.",
         "buttons": [
             ("Подъем штанги на бицепс", "barbell_biceps"),
-            ("Молотки на бицепс", "hammers_biceps"),
+            ("Молотки", "hammers_biceps"),
         ],
         "parent": "hands"
+    },
+
+    "barbell_biceps": {
+        "text": "Подъем штанги на бицепс",
+        "video": "https://www.youtube.com/watch?v=kwG2ipFRgfo",
+        "parent": "biceps"
+    },
+
+    "hammers_biceps": {
+        "text": "Молотки на бицепс",
+        "video": "https://www.youtube.com/watch?v=zC3nLlEvin4",
+        "parent": "biceps"
     },
 
     "triceps": {
         "text": "Выбери упражнение на трицепс.",
         "buttons": [
             ("Французский жим", "french_press"),
-            ("Канат на трицепс", "triceps_rope"),
+            ("Канат", "triceps_rope"),
         ],
         "parent": "hands"
+    },
+
+    "french_press": {
+        "text": "Французский жим",
+        "video": "https://www.youtube.com/watch?v=YbX7Wd8jQ-Q",
+        "parent": "triceps"
+    },
+
+    "triceps_rope": {
+        "text": "Канат на трицепс",
+        "video": "https://www.youtube.com/watch?v=vB5OHsJ3EME",
+        "parent": "triceps"
     },
 
     "legs": {
@@ -51,16 +75,28 @@ MENU = {
     },
 
     "buttocks": {
-        "text": "Выбери упражнение на ягодицы.",
+        "text": "Ягодицы",
         "buttons": [
-            ("Ягодичный мост", "buttock_bridge"),
-            ("Румынская тяга", "romanian_thrust"),
+            ("Ягодичный мост", "glute_bridge"),
+            ("Румынская тяга", "romanian_deadlift"),
         ],
         "parent": "legs"
     },
 
+    "glute_bridge": {
+        "text": "Ягодичный мост",
+        "video": "https://www.youtube.com/watch?v=LM8XHLYJoYs",
+        "parent": "buttocks"
+    },
+
+    "romanian_deadlift": {
+        "text": "Румынская тяга",
+        "video": "https://www.youtube.com/watch?v=2SHsk9AzdjA",
+        "parent": "buttocks"
+    },
+
     "quads": {
-        "text": "Выбери упражнение на квадрицепс.",
+        "text": "Квадрицепс",
         "buttons": [
             ("Присед", "squat"),
             ("Разгибание ног", "leg_extension"),
@@ -68,25 +104,48 @@ MENU = {
         "parent": "legs"
     },
 
+    "squat": {
+        "text": "Присед со штангой",
+        "video": "https://www.youtube.com/watch?v=Dy28eq2PjcM",
+        "parent": "quads"
+    },
+
+    "leg_extension": {
+        "text": "Разгибание ног",
+        "video": "https://www.youtube.com/watch?v=YyvSfVjQeL0",
+        "parent": "quads"
+    },
+
     "legs_biceps": {
-        "text": "Выбери упражнение на бицепс бедра.",
+        "text": "Бицепс бедра",
         "buttons": [
-            ("Румынская тяга", "romanian_thrust"),
-            ("Становая тяга", "deadlift_legs"),
+            ("Становая тяга", "deadlift"),
         ],
         "parent": "legs"
+    },
+
+    "deadlift": {
+        "text": "Становая тяга",
+        "video": "https://www.youtube.com/watch?v=ytGaGIn3SjE",
+        "parent": "legs_biceps"
     },
 
     "calves": {
-        "text": "Выбери упражнение на икры.",
+        "text": "Икры",
         "buttons": [
-            ("Подъёмы на носки стоя", "standing_toe_lifts"),
+            ("Подъёмы на носки", "calf_raises"),
         ],
         "parent": "legs"
     },
 
+    "calf_raises": {
+        "text": "Подъёмы на носки",
+        "video": "https://www.youtube.com/watch?v=-M4-G8p8fmc",
+        "parent": "calves"
+    },
+
     "torso": {
-        "text": "Выбери мышцу туловища.",
+        "text": "Туловище",
         "buttons": [
             ("Грудь", "chest"),
             ("Спина", "back"),
@@ -96,35 +155,68 @@ MENU = {
     },
 
     "chest": {
-        "text": "Выбери упражнение на грудь.",
+        "text": "Грудь",
         "buttons": [
-            ("Жим лежа", "bench_press"),
-            ("Жим на наклонной", "incline_press"),
+            ("Жим лёжа", "bench_press"),
             ("Жим гантелей", "dumbbell_press"),
         ],
         "parent": "torso"
     },
 
+    "bench_press": {
+        "text": "Жим штанги лёжа",
+        "video": "https://www.youtube.com/watch?v=gRVjAtPip0Y",
+        "parent": "chest"
+    },
+
+    "dumbbell_press": {
+        "text": "Жим гантелей",
+        "video": "https://www.youtube.com/watch?v=VmB1G1K7v94",
+        "parent": "chest"
+    },
+
     "back": {
-        "text": "Выбери упражнение на спину.",
+        "text": "Спина",
         "buttons": [
             ("Тяга верхнего блока", "lat_pulldown"),
             ("Тяга штанги", "barbell_row"),
-            ("Становая тяга", "deadlift_back"),
         ],
         "parent": "torso"
+    },
+
+    "lat_pulldown": {
+        "text": "Тяга верхнего блока",
+        "video": "https://www.youtube.com/watch?v=CAwf7n6Luuc",
+        "parent": "back"
+    },
+
+    "barbell_row": {
+        "text": "Тяга штанги в наклоне",
+        "video": "https://www.youtube.com/watch?v=vT2GjY_Umpw",
+        "parent": "back"
     },
 
     "press": {
-        "text": "Выбери упражнение на пресс.",
+        "text": "Пресс",
         "buttons": [
-            ("Подъем коленей", "knee_raises"),
-            ("Подъем ног", "leg_raises"),
+            ("Подъем коленей", "knee_raise"),
+            ("Подъем ног", "leg_raise"),
         ],
         "parent": "torso"
     },
-}
 
+    "knee_raise": {
+        "text": "Подъем коленей",
+        "video": "https://www.youtube.com/watch?v=JB2oyawG9KI",
+        "parent": "press"
+    },
+
+    "leg_raise": {
+        "text": "Подъем ног",
+        "video": "https://www.youtube.com/watch?v=l4kQd9eWclE",
+        "parent": "press"
+    },
+}
 
 def main_menu():
     keyboard = [
@@ -212,8 +304,18 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
         return
 
+    exercise = MENU.get(data)
+
+    if exercise:
+        text = exercise.get("text", data)
+        video = exercise.get("video")
+
+        message = f"🏋️ {text}\n\n🎥 Видео техника:\n{video if video else 'Видео отсутствует'}"
+    else:
+        message = f"Техника упражнения: {data}"
+
     await query.edit_message_text(
-        f"Техника упражнения: {data}",
+        message,
         reply_markup=InlineKeyboardMarkup([
             [InlineKeyboardButton("Главное меню", callback_data="back_in_menu")]
         ])
