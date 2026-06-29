@@ -172,7 +172,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         context.user_data["current"] = None
 
         await query.edit_message_text(
-            "Главное меню:",
+            "Выберите часть тела которую хотите тренировать.",
             reply_markup=main_menu()
         )
         return
@@ -182,7 +182,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
         if not history:
             await query.edit_message_text(
-                "Главное меню:",
+                "Выберите часть тела которую хотите тренировать.",
                 reply_markup=main_menu()
             )
             return
