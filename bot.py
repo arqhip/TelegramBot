@@ -18,7 +18,7 @@ MENU = {
             ("Бицепс", "biceps"),
             ("Трицепс", "triceps"),
         ],
-        "parent": "hands"
+        "parent": "root"
     },
 
     "biceps": {
@@ -47,7 +47,7 @@ MENU = {
             ("Бицепс бедра", "legs_biceps"),
             ("Икры", "calves"),
         ],
-        "parent": "legs"
+        "parent": "root"
     },
 
     "buttocks": {
@@ -69,7 +69,7 @@ MENU = {
     },
 
     "legs_biceps": {
-        "text": "Выбери упражнение на бицепс ноги.",
+        "text": "Выбери упражнение на бицепс бедра.",
         "buttons": [
             ("Румынская тяга", "romanian_thrust"),
             ("Становая тяга", "deadlift_legs"),
@@ -92,15 +92,15 @@ MENU = {
             ("Спина", "back"),
             ("Пресс", "press"),
         ],
-        "parent": "torso"
+        "parent": "root"
     },
 
     "chest": {
         "text": "Выбери упражнение на грудь.",
         "buttons": [
-            ("Жим штанги лежа", "bench_press"),
-            ("Жим штанги на наклонной скамье", "bench_press_bench"),
-            ("Жим гантелей", "dumbbell_bench"),
+            ("Жим лежа", "bench_press"),
+            ("Жим на наклонной", "incline_press"),
+            ("Жим гантелей", "dumbbell_press"),
         ],
         "parent": "torso"
     },
@@ -108,8 +108,8 @@ MENU = {
     "back": {
         "text": "Выбери упражнение на спину.",
         "buttons": [
-            ("Тяга верхнего блока", "upper_block_thrust"),
-            ("Тяга штанги в наклоне", "barbell_pull_tilt"),
+            ("Тяга верхнего блока", "lat_pulldown"),
+            ("Тяга штанги", "barbell_row"),
             ("Становая тяга", "deadlift_back"),
         ],
         "parent": "torso"
@@ -118,12 +118,13 @@ MENU = {
     "press": {
         "text": "Выбери упражнение на пресс.",
         "buttons": [
-            ("Подъем коленей к груди", "lifting_knees_chest"),
-            ("Подъем прямых ног", "lifting_straight_legs"),
+            ("Подъем коленей", "knee_raises"),
+            ("Подъем ног", "leg_raises"),
         ],
         "parent": "torso"
     },
 }
+
 
 def main_menu():
     keyboard = [
@@ -131,12 +132,11 @@ def main_menu():
             InlineKeyboardButton("Туловище", callback_data="torso"),
             InlineKeyboardButton("Руки", callback_data="hands"),
         ],
-        [
-            InlineKeyboardButton("Ноги", callback_data="legs"),
-        ],
+        [InlineKeyboardButton("Ноги", callback_data="legs")],
     ]
 
     return InlineKeyboardMarkup(keyboard)
+
 
 def build_keyboard(key: str):
     buttons = MENU[key]["buttons"]
@@ -146,23 +146,18 @@ def build_keyboard(key: str):
         for text, data in buttons
     ]
 
-        keyboard.append([
-            InlineKeyboardButton("Назад", callback_data="step_back"),
-            InlineKeyboardButton("Вернуться в меню", callback_data="back_in_menu"),
-        ])
+    keyboard.append([
+        InlineKeyboardButton("Назад", callback_data="step_back"),
+        InlineKeyboardButton("В меню", callback_data="back_in_menu"),
+    ])
+
+    return InlineKeyboardMarkup(keyboard)
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    keyboard = [
-        [
-            InlineKeyboardButton("Туловище", callback_data="torso"),
-            InlineKeyboardButton("Руки", callback_data="hands"),
-        ],
-        [InlineKeyboardButton("Ноги", callback_data="legs")],
-    ]
-
     await update.message.reply_text(
         "Выберите что хотите тренировать.",
-        reply_markup=InlineKeyboardMarkup(keyboard),
+        reply_markup=main_menu(),
     )
 
 
@@ -173,19 +168,12 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     data = query.data
 
     if data == "back_in_menu":
+        context.user_data["history"] = []
         context.user_data["current"] = None
-
-        keyboard = [
-            [
-                InlineKeyboardButton("Туловище", callback_data="torso"),
-                InlineKeyboardButton("Руки", callback_data="hands"),
-            ],
-            [InlineKeyboardButton("Ноги", callback_data="legs")],
-        ]
 
         await query.edit_message_text(
             "Главное меню:",
-            reply_markup=InlineKeyboardMarkup(keyboard)
+            reply_markup=main_menu()
         )
         return
 
@@ -194,14 +182,14 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
         if not history:
             await query.edit_message_text(
-                "Выберите что хотите тренировать.",
+                "Главное меню:",
                 reply_markup=main_menu()
             )
-            context.user_data["current"] = None
             return
 
         previous = history.pop()
         context.user_data["current"] = previous
+        context.user_data["history"] = history
 
         await query.edit_message_text(
             MENU[previous]["text"],
@@ -224,25 +212,13 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
         return
 
-    if data == "back_in_menu":
-        context.user_data["history"] = []
-        context.user_data["current"] = None
-
-        await query.edit_message_text(
-            "Выберите что хотите тренировать.",
-            reply_markup=main_menu()
-        )
-        return
-
     await query.edit_message_text(
         f"Техника упражнения: {data}"
     )
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text(
-        "Напишите /start чтобы открыть упражнения."
-    )
+    await update.message.reply_text("Напишите /start чтобы открыть меню.")
 
 
 def main() -> None:
@@ -251,13 +227,13 @@ def main() -> None:
     if not TOKEN:
         raise ValueError("TOKEN variable not found!")
 
-    application = Application.builder().token(TOKEN).build()
+    app = Application.builder().token(TOKEN).build()
 
-    application.add_handler(CommandHandler("start", start))
-    application.add_handler(CallbackQueryHandler(button))
-    application.add_handler(CommandHandler("help", help_command))
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("help", help_command))
+    app.add_handler(CallbackQueryHandler(button))
 
-    application.run_polling()
+    app.run_polling()
 
 
 if __name__ == "__main__":
