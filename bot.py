@@ -213,7 +213,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     await query.edit_message_text(
-        f"Техника упражнения: {data}"
+        f"Техника упражнения: {data}",
+        reply_markup=main_menu()
     )
 
 
