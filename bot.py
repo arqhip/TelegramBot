@@ -214,7 +214,9 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     await query.edit_message_text(
         f"Техника упражнения: {data}",
-        reply_markup=main_menu()
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton("Главное меню", callback_data="back_in_menu")]
+        ])
     )
 
 
