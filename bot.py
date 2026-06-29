@@ -311,7 +311,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         video = exercise.get("video")
 
         await query.edit_message_text(
-            f"🏋️ {text}\n\nВидео техника:\n{video}",
+            f"{text}\n\nВидео техника:\n{video}",
             reply_markup=InlineKeyboardMarkup([
                 [InlineKeyboardButton("Главное меню", callback_data="back_in_menu")]
             ])
